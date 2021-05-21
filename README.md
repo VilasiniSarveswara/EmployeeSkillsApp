@@ -4,7 +4,8 @@ Intro: This is an implementation for the Perficient Employee Skills Application.
 
 
 Components:
-1. DB - PostgreSQL
+1. DB - PostgreSQL 
+DB is running on local machine @port 5432. Schema & queries used are available in the Database folder.
 2. Backend API Server - Java Springboot
 3. Web UI - Vue
 
