@@ -3,7 +3,7 @@ package com.perficient.perficientapiserver.model;
 import java.util.UUID;
 
 public class Address {
-    private UUID address_id;
+    private UUID id;
     private String street;
     private String suite;
     private String city;
@@ -15,12 +15,22 @@ public class Address {
 
     }
 
-    public UUID getAddress_id() {
-        return address_id;
+    public Address(UUID id, String street, String suite, String city, String region, String postal, String countryCode) {
+        this.id = id;
+        this.street = street;
+        this.suite = suite;
+        this.city = city;
+        this.region = region;
+        this.postal = postal;
+        this.countryCode = countryCode;
     }
 
-    public void setAddress_id(UUID address_id) {
-        this.address_id = address_id;
+    public UUID getId() {
+        return id;
+    }
+
+    public void setId(UUID id) {
+        this.id = id;
     }
 
     public String getStreet() {
@@ -71,17 +81,7 @@ public class Address {
         this.countryCode = countryCode;
     }
 
-    public Address(UUID address_id, String street, String suite, String city, String region, String postal, String countryCode) {
-        this.address_id = address_id;
-        this.street = street;
-        this.suite = suite;
-        this.city = city;
-        this.region = region;
-        this.postal = postal;
-        this.countryCode = countryCode;
-    }
-
-    public String toString(){
-        return "" + getAddress_id() + " " + getStreet() + "" + getSuite() + " " + getCity() + " "+ getRegion() + " " +getPostal() + " "+ getCountryCode();
-    }
+    //    public String toString(){
+//        return "" + getAddress_id() + " " + getStreet() + "" + getSuite() + " " + getCity() + " "+ getRegion() + " " +getPostal() + " "+ getCountryCode();
+//    }
 }

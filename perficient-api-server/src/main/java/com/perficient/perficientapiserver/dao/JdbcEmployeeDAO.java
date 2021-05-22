@@ -2,6 +2,7 @@ package com.perficient.perficientapiserver.dao;
 
 import com.perficient.perficientapiserver.model.Address;
 import com.perficient.perficientapiserver.model.Employee;
+import com.perficient.perficientapiserver.model.Skill;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.rowset.SqlRowSet;
 import org.springframework.stereotype.Component;
@@ -15,6 +16,7 @@ import java.util.UUID;
 public class JdbcEmployeeDAO implements  EmployeeDAO{
     private JdbcTemplate jdbcTemplate;
 
+
     public JdbcEmployeeDAO(JdbcTemplate jdbcTemplate) {
         this.jdbcTemplate = jdbcTemplate;
     }
@@ -26,8 +28,11 @@ public class JdbcEmployeeDAO implements  EmployeeDAO{
         SqlRowSet results = jdbcTemplate.queryForRowSet(sqlGetAllEmployees);
          while(results.next()){
              Employee theEmployee = mapRowToEmployee(results);
+             JdbcSkillDAO skillDAO = new JdbcSkillDAO(jdbcTemplate);
+             theEmployee.setSkills(skillDAO.findAllSkillsByEmployee(theEmployee.getId()));
              employeeList.add(theEmployee);
          }
+
         return employeeList;
     }
 
@@ -42,30 +47,32 @@ public class JdbcEmployeeDAO implements  EmployeeDAO{
     UUID addressID;
     while(results.next()){
         addressID = mapRowToAddress(results) ;
-        address.setAddress_id(addressID);
+        address.setId(addressID);
     }
     employee.setAddress(address);
 
     String sqlCreateNewEmployee = "INSERT INTO employee (firstName,lastName,address,contactEmail,companyEmail,birthDate,hiredDate,role,businessUnit,assignedTo) VALUES (?,?,?,?,?,?,?,CAST(? AS roles),CAST(? AS businessunits),?);";
-    jdbcTemplate.update(sqlCreateNewEmployee,employee.getFirstName(),employee.getLastName(),address.getAddress_id(),employee.getContactEmail(),employee.getCompanyEmail(),employee.getBirthDate(),employee.getHiredDate(),employee.getRole(),employee.getBusinessUnit(),employee.getAssignedTo());
+    jdbcTemplate.update(sqlCreateNewEmployee,employee.getFirstName(),employee.getLastName(),address.getId(),employee.getContactEmail(),employee.getCompanyEmail(),employee.getBirthDate(),employee.getHiredDate(),employee.getRole(),employee.getBusinessUnit(),employee.getAssignedTo());
 
     }
 
     @Override
     public Employee getEmployeeByID(UUID employeeID) {
         Employee theEmployee = new Employee();
-        String sqlGetEmployeeByID = "SELECT e.employee_id,e.firstName,e.lastName,a.address_id,a.street,a.suite,a.city,a.region,a.postal,a.address_country_code,e.contactemail,e.companyemail,e.birthdate,e.hireddate,e.role,e.businessunit,e.assignedto FROM employee e JOIN address a ON e.address = a.address_id WHERE e.employee_id = ?;";
-        SqlRowSet results = jdbcTemplate.queryForRowSet(sqlGetEmployeeByID,employeeID);
+        String sqlGetEmployeeAddress = "SELECT e.employee_id,e.firstName,e.lastName,a.address_id,a.street,a.suite,a.city,a.region,a.postal,a.address_country_code,e.contactemail,e.companyemail,e.birthdate,e.hireddate,e.role,e.businessunit,e.assignedto FROM employee e JOIN address a ON e.address = a.address_id WHERE e.employee_id = ?;";
+        SqlRowSet results = jdbcTemplate.queryForRowSet(sqlGetEmployeeAddress,employeeID);
         while(results.next()){
             theEmployee = mapRowToEmployee(results);
         }
+        JdbcSkillDAO skillDAO = new JdbcSkillDAO(jdbcTemplate);
+        theEmployee.setSkills(skillDAO.findAllSkillsByEmployee(employeeID));
         return theEmployee;
     }
 
     @Override
     public void updateEmployee(UUID employeeID,Employee employee) {
         String sqlUpdateEmployee = "UPDATE employee SET employee_id =?,firstName = ?,lastName=?,address=?,contactemail=?,companyemail=?,birthdate=?,hireddate=?,role= CAST(? AS roles),businessunit=CAST(? AS businessunits),assignedto=? WHERE employee_id=?;";
-        jdbcTemplate.update(sqlUpdateEmployee,employee.getEmployee_id(),employee.getFirstName(),employee.getLastName(),employee.getAddress().getAddress_id(),employee.getContactEmail(),employee.getCompanyEmail(),employee.getBirthDate(),employee.getHiredDate(),employee.getRole(),employee.getBusinessUnit(),employee.getAssignedTo(),employeeID);
+        jdbcTemplate.update(sqlUpdateEmployee,employee.getId(),employee.getFirstName(),employee.getLastName(),employee.getAddress().getId(),employee.getContactEmail(),employee.getCompanyEmail(),employee.getBirthDate(),employee.getHiredDate(),employee.getRole(),employee.getBusinessUnit(),employee.getAssignedTo(),employeeID);
     }
 
     @Override
@@ -82,11 +89,11 @@ public class JdbcEmployeeDAO implements  EmployeeDAO{
     Employee mapRowToEmployee(SqlRowSet results){
         Employee theEmployee = new Employee();
         Address theAddress = new Address();
-        theEmployee.setEmployee_id((UUID)results.getObject("employee_id"));
+        theEmployee.setId((UUID)results.getObject("employee_id"));
         theEmployee.setFirstName(results.getString("firstName"));
         theEmployee.setLastName(results.getString("lastName"));
         //Get the address and store it in Address instance & then set that address to Employee address field
-        theAddress.setAddress_id((UUID)results.getObject("address_id"));
+        theAddress.setId((UUID)results.getObject("address_id"));
         theAddress.setStreet(results.getString("street"));
         theAddress.setSuite(results.getString("suite"));
         theAddress.setCity(results.getString("city"));

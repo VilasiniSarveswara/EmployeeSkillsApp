@@ -1,11 +1,38 @@
 --Fetch a particular employee
 
-SELECT e.employee_id,e.firstName,e.lastName,a.street,a.city,a.region,a.postal,a.address_country_code FROM employee e JOIN address a ON e.address = a.address_id WHERE e.employee_id = '6289f28a-4919-4b1c-b493-390edd04ae1a';
+SELECT e.employee_id,e.firstName,e.lastName,a.street,a.city,a.region,a.postal,a.address_country_code,e.contactemail,e.companyemail,e.birthdate,e.hireddate,e.role,e.businessunit,es.skill_id,s.field_id,f.name,f.type,s.experience,s.summary,e.assignedto 
+FROM employee e 
+JOIN address a ON e.address = a.address_id 
+JOIN employee_skill es ON e.employee_id = es.employee_id
+JOIN skill s ON es.skill_id = s.skill_id
+JOIN field f ON s.field_id = f.field_id
+WHERE e.employee_id = '632ac580-6b7d-4980-91d7-14bcadba51a9';
+
+
+SELECT e.firstName,e.lastName,a.street,a.city,a.region,a.postal,a.address_country_code,e.contactemail,e.companyemail,e.birthdate,e.hireddate,e.role,e.businessunit,e.assignedto
+FROM address a
+JOIN employee e  ON a.address_id = e.address
+WHERE e.employee_id = '632ac580-6b7d-4980-91d7-14bcadba51a9';
+
 --SELECT e.employee_id,e.firstName,e.lastName,a.street,a.city,a.region,a.postal,a.address_country_code FROM employee e JOIN address a ON e.address = a.address_id WHERE e.employee_id = ?;
+
+--SELECT the skills of an employee
+SELECT es.employee_id,es.skill_id,s.field_id,f.name,f.type,s.experience,s.summary 
+FROM employee_skill es 
+JOIN skill s ON es.skill_id = s.skill_id 
+JOIN field f ON s.field_id = f.field_id 
+WHERE es.employee_id = '632ac580-6b7d-4980-91d7-14bcadba51a9';
+
 
 --Fetch all employees
 
-SELECT e.employee_id,e.firstName,e.lastName,a.street,a.suite,a.city,a.region,a.postal,a.address_country_code,e.contactemail,e.companyemail,e.birthdate,e.hireddate,e.role,e.businessunit,e.assignedto FROM employee e JOIN address a ON e.address = a.address_id;
+SELECT e.employee_id,e.firstName,e.lastName,a.street,a.suite,a.city,a.region,a.postal,a.address_country_code,e.contactemail,e.companyemail,e.birthdate,e.hireddate,e.role,e.businessunit,e.assignedto 
+FROM employee e 
+JOIN address a ON e.address = a.address_id
+JOIN employee_skill es ON e.employee_id = es.employee_id;
+JOIN skill s ON es.skill_id = s.skill_id,
+JOIN field f ON s.field_id= f.field_id;
+
 SELECT e.employee_id,e.firstName,e.lastName,a.street,a.suite,a.city,a.region,a.postal,a.address_country_code,e.contactemail,e.companyemail,e.birthdate,e.hireddate,e.role,e.businessunit,e.assignedto FROM employee e JOIN address a ON e.address = a.address_id WHERE e.employee_id = ?;
 
 

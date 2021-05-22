@@ -1,11 +1,11 @@
 package com.perficient.perficientapiserver.model;
 
 import java.time.LocalDate;
-import java.util.Date;
+import java.util.List;
 import java.util.UUID;
 
 public class Employee {
-    private UUID employee_id;
+    private UUID id;
     private String firstName;
     private String lastName;
     private Address address;
@@ -15,14 +15,15 @@ public class Employee {
     private LocalDate hiredDate;
     private String role;
     private String businessUnit;
+    private List<Skill> skills;
     private UUID assignedTo;
 
     public Employee(){
 
     }
 
-    public Employee(UUID employee_id, String firstName, String lastName, Address address, String contactEmail, String companyEmail, LocalDate birthDate, LocalDate hiredDate, String role, String businessUnit, UUID assignedTo) {
-        this.employee_id = employee_id;
+    public Employee(UUID id, String firstName, String lastName, Address address, String contactEmail, String companyEmail, LocalDate birthDate, LocalDate hiredDate, String role, String businessUnit, List<Skill> skills, UUID assignedTo) {
+        this.id = id;
         this.firstName = firstName;
         this.lastName = lastName;
         this.address = address;
@@ -32,15 +33,16 @@ public class Employee {
         this.hiredDate = hiredDate;
         this.role = role;
         this.businessUnit = businessUnit;
+        this.skills = skills;
         this.assignedTo = assignedTo;
     }
 
-    public UUID getEmployee_id() {
-        return employee_id;
+    public UUID getId() {
+        return id;
     }
 
-    public void setEmployee_id(UUID employee_id) {
-        this.employee_id = employee_id;
+    public void setId(UUID id) {
+        this.id = id;
     }
 
     public String getFirstName() {
@@ -113,6 +115,14 @@ public class Employee {
 
     public void setBusinessUnit(String businessUnit) {
         this.businessUnit = businessUnit;
+    }
+
+    public List<Skill> getSkills() {
+        return skills;
+    }
+
+    public void setSkills(List<Skill> skills) {
+        this.skills = skills;
     }
 
     public UUID getAssignedTo() {
