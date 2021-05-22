@@ -10,6 +10,6 @@ public interface EmployeeDAO {
     List<Employee> getEmployeeList();
     void createEmployee(Employee employee,Address address);
     Employee getEmployeeByID(UUID employeeID);
-    void updateEmployee(Employee employee);;
+    void updateEmployee(UUID employeeID,Employee employee);;
     void deleteEmployee(UUID employeeID);
 }

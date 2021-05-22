@@ -12,7 +12,7 @@ public class Employee {
     private String contactEmail;
     private String companyEmail;
     private LocalDate birthDate;
-    private LocalDate hiredData;
+    private LocalDate hiredDate;
     private String role;
     private String businessUnit;
     private UUID assignedTo;
@@ -21,7 +21,7 @@ public class Employee {
 
     }
 
-    public Employee(UUID employee_id, String firstName, String lastName, Address address, String contactEmail, String companyEmail, LocalDate birthDate, LocalDate hiredData, String role, String businessUnit, UUID assignedTo) {
+    public Employee(UUID employee_id, String firstName, String lastName, Address address, String contactEmail, String companyEmail, LocalDate birthDate, LocalDate hiredDate, String role, String businessUnit, UUID assignedTo) {
         this.employee_id = employee_id;
         this.firstName = firstName;
         this.lastName = lastName;
@@ -29,7 +29,7 @@ public class Employee {
         this.contactEmail = contactEmail;
         this.companyEmail = companyEmail;
         this.birthDate = birthDate;
-        this.hiredData = hiredData;
+        this.hiredDate = hiredDate;
         this.role = role;
         this.businessUnit = businessUnit;
         this.assignedTo = assignedTo;
@@ -91,12 +91,12 @@ public class Employee {
         this.birthDate = birthDate;
     }
 
-    public LocalDate getHiredData() {
-        return hiredData;
+    public LocalDate getHiredDate() {
+        return hiredDate;
     }
 
-    public void setHiredData(LocalDate hiredData) {
-        this.hiredData = hiredData;
+    public void setHiredDate(LocalDate hiredDate) {
+        this.hiredDate = hiredDate;
     }
 
     public String getRole() {
