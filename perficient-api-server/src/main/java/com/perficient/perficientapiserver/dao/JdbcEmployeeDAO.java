@@ -24,7 +24,7 @@ public class JdbcEmployeeDAO implements  EmployeeDAO{
     @Override
     public List<Employee> getEmployeeList() {
         List<Employee> employeeList = new ArrayList<>();
-        String sqlGetAllEmployees = "SELECT e.employee_id,e.firstName,e.lastName,a.address_id,a.street,a.suite,a.city,a.region,a.postal,a.address_country_code,e.contactemail,e.companyemail,e.birthdate,e.hireddate,e.role,e.businessunit,e.assignedto FROM employee e JOIN address a ON e.address = a.address_id;";
+        String sqlGetAllEmployees = "SELECT e.employee_id,e.firstName,e.lastName,a.address_id,a.street,a.suite,a.city,a.region,a.postal,a.country,e.contactemail,e.companyemail,e.birthdate,e.hireddate,e.role,e.businessunit,e.assignedto FROM employee e JOIN address a ON e.address = a.address_id;";
         SqlRowSet results = jdbcTemplate.queryForRowSet(sqlGetAllEmployees);
          while(results.next()){
              Employee theEmployee = mapRowToEmployee(results);
@@ -38,28 +38,45 @@ public class JdbcEmployeeDAO implements  EmployeeDAO{
 
     @Override
     public void createEmployee(Employee employee,Address address) {
+    //First enter the address in the Address table in db
+        //TODO: Figure out how to ensure transaction either completes entirely or rolls back.
+    String sqlCreateAddress = "INSERT INTO address(street,suite,city,region,postal,country) VALUES (?,?,?,?,?,?);";
+    jdbcTemplate.update(sqlCreateAddress,address.getStreet(),address.getSuite(),address.getCity(),address.getRegion(),address.getPostal(),address.getCountry());
 
-    String sqlCreateAddress = "INSERT INTO address(street,suite,city,region,postal,address_country_code) VALUES (?,?,?,?,?,?);";
-    jdbcTemplate.update(sqlCreateAddress,address.getStreet(),address.getSuite(),address.getCity(),address.getRegion(),address.getPostal(),address.getCountryCode());
-
-    String sqlGetAddressID = "SELECT a.address_id FROM address a WHERE a.street = ? AND a.suite =? AND a.city= ? AND a.region = ? AND a.postal = ? AND a.address_country_code = ?;";
-    SqlRowSet results = jdbcTemplate.queryForRowSet(sqlGetAddressID,address.getStreet(),address.getSuite(),address.getCity(),address.getRegion(),address.getPostal(),address.getCountryCode());
-    UUID addressID;
+    //Second, get the address id
+    String sqlGetAddressID = "SELECT a.address_id FROM address a WHERE a.street = ?  AND a.city= ? AND a.region = ? AND a.postal = ? AND a.country = ?;";
+    SqlRowSet results = jdbcTemplate.queryForRowSet(sqlGetAddressID,address.getStreet(),address.getCity(),address.getRegion(),address.getPostal(),address.getCountry());
+    UUID addressID = null;
     while(results.next()){
         addressID = mapRowToAddress(results) ;
         address.setId(addressID);
     }
     employee.setAddress(address);
 
+
+    //Third, create the employee in the db
     String sqlCreateNewEmployee = "INSERT INTO employee (firstName,lastName,address,contactEmail,companyEmail,birthDate,hiredDate,role,businessUnit,assignedTo) VALUES (?,?,?,?,?,?,?,CAST(? AS roles),CAST(? AS businessunits),?);";
     jdbcTemplate.update(sqlCreateNewEmployee,employee.getFirstName(),employee.getLastName(),address.getId(),employee.getContactEmail(),employee.getCompanyEmail(),employee.getBirthDate(),employee.getHiredDate(),employee.getRole(),employee.getBusinessUnit(),employee.getAssignedTo());
 
+    //Fourth, get the newly created employee id.
+        String sqlGetEmployeeID = "SELECT employee_id FROM employee WHERE firstname = ? AND lastname = ?;";
+        results = jdbcTemplate.queryForRowSet(sqlGetEmployeeID,employee.getFirstName(),employee.getLastName());
+        UUID employeeId = null;
+        while(results.next()){
+            employeeId = (UUID)results.getObject("employee_id");
+        }
+        employee.setId(employeeId);
+    //Fifth,add skills to the employee and update the related table employee_skill
+    JdbcSkillDAO skillDAO = new JdbcSkillDAO(jdbcTemplate);
+    for(Skill skill : employee.getSkills()){
+        skillDAO.addSkillToEmployee(employee.getId(),skill);
+    }
     }
 
     @Override
     public Employee getEmployeeByID(UUID employeeID) {
         Employee theEmployee = new Employee();
-        String sqlGetEmployeeAddress = "SELECT e.employee_id,e.firstName,e.lastName,a.address_id,a.street,a.suite,a.city,a.region,a.postal,a.address_country_code,e.contactemail,e.companyemail,e.birthdate,e.hireddate,e.role,e.businessunit,e.assignedto FROM employee e JOIN address a ON e.address = a.address_id WHERE e.employee_id = ?;";
+        String sqlGetEmployeeAddress = "SELECT e.employee_id,e.firstName,e.lastName,a.address_id,a.street,a.suite,a.city,a.region,a.postal,a.country,e.contactemail,e.companyemail,e.birthdate,e.hireddate,e.role,e.businessunit,e.assignedto FROM employee e JOIN address a ON e.address = a.address_id WHERE e.employee_id = ?;";
         SqlRowSet results = jdbcTemplate.queryForRowSet(sqlGetEmployeeAddress,employeeID);
         while(results.next()){
             theEmployee = mapRowToEmployee(results);
@@ -71,8 +88,18 @@ public class JdbcEmployeeDAO implements  EmployeeDAO{
 
     @Override
     public void updateEmployee(UUID employeeID,Employee employee) {
-        String sqlUpdateEmployee = "UPDATE employee SET employee_id =?,firstName = ?,lastName=?,address=?,contactemail=?,companyemail=?,birthdate=?,hireddate=?,role= CAST(? AS roles),businessunit=CAST(? AS businessunits),assignedto=? WHERE employee_id=?;";
-        jdbcTemplate.update(sqlUpdateEmployee,employee.getId(),employee.getFirstName(),employee.getLastName(),employee.getAddress().getId(),employee.getContactEmail(),employee.getCompanyEmail(),employee.getBirthDate(),employee.getHiredDate(),employee.getRole(),employee.getBusinessUnit(),employee.getAssignedTo(),employeeID);
+        String sqlUpdateAddress = "UPDATE address SET street =?,suite = ?,city = ?,region = ?,postal = ?,country = ? WHERE address_id = CAST(? AS UUID);";
+        jdbcTemplate.update(sqlUpdateAddress,employee.getAddress().getStreet(),employee.getAddress().getSuite(),employee.getAddress().getCity(),employee.getAddress().getRegion(),employee.getAddress().getPostal(),employee.getAddress().getCountry(),employee.getAddress().getId());
+
+
+        String sqlUpdateEmployee = "UPDATE employee SET firstName = ?,lastName=?,address=?,contactemail=?,companyemail=?,birthdate=?,hireddate=?,role= CAST(? AS roles),businessunit=CAST(? AS businessunits),assignedto=? WHERE employee_id=?;";
+        jdbcTemplate.update(sqlUpdateEmployee,employee.getFirstName(),employee.getLastName(),employee.getAddress().getId(),employee.getContactEmail(),employee.getCompanyEmail(),employee.getBirthDate(),employee.getHiredDate(),employee.getRole(),employee.getBusinessUnit(),employee.getAssignedTo(),employeeID);
+
+        JdbcSkillDAO skillDAO = new JdbcSkillDAO(jdbcTemplate);
+        for(int i = 0; i < employee.getSkills().size();i++){
+            skillDAO.updateSkillFromEmployeeById(employeeID,employee.getSkills().get(i).getId(),employee.getSkills().get(i));
+        }
+
     }
 
     @Override
@@ -82,6 +109,16 @@ public class JdbcEmployeeDAO implements  EmployeeDAO{
 
     String sqlDeleteEmployee = "DELETE FROM employee WHERE employee_id = ?";
     jdbcTemplate.update(sqlDeleteEmployee,employeeID);
+
+    String sqlGetAddressId = "SELECT address FROM employee WHERE employee_id = ?;";
+    SqlRowSet results = jdbcTemplate.queryForRowSet(sqlGetAddressId,employeeID);
+    UUID addressId = null;
+    while(results.next()){
+        addressId = (UUID)results.getObject("address");
+    }
+
+    String sqlDeleteEmployeeAddress = "DELETE FROM address where address_id = ?;";
+    jdbcTemplate.update(sqlDeleteEmployeeAddress,addressId);
 
     }
 
@@ -99,7 +136,7 @@ public class JdbcEmployeeDAO implements  EmployeeDAO{
         theAddress.setCity(results.getString("city"));
         theAddress.setRegion(results.getString("region"));
         theAddress.setPostal(results.getString("postal"));
-        theAddress.setCountryCode(results.getString("address_country_code"));
+        theAddress.setCountry(results.getString("country"));
         theEmployee.setAddress(theAddress);
         theEmployee.setContactEmail(results.getString("contactemail"));
         theEmployee.setCompanyEmail(results.getString("companyemail"));

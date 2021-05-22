@@ -9,20 +9,20 @@ public class Address {
     private String city;
     private String region;
     private String postal;
-    private String countryCode;
+    private String country;
 
     public Address(){
 
     }
 
-    public Address(UUID id, String street, String suite, String city, String region, String postal, String countryCode) {
+    public Address(UUID id, String street, String suite, String city, String region, String postal, String country) {
         this.id = id;
         this.street = street;
         this.suite = suite;
         this.city = city;
         this.region = region;
         this.postal = postal;
-        this.countryCode = countryCode;
+        this.country = country;
     }
 
     public UUID getId() {
@@ -73,15 +73,11 @@ public class Address {
         this.postal = postal;
     }
 
-    public String getCountryCode() {
-        return countryCode;
+    public String getCountry() {
+        return country;
     }
 
-    public void setCountryCode(String countryCode) {
-        this.countryCode = countryCode;
+    public void setCountry(String country) {
+        this.country = country;
     }
-
-    //    public String toString(){
-//        return "" + getAddress_id() + " " + getStreet() + "" + getSuite() + " " + getCity() + " "+ getRegion() + " " +getPostal() + " "+ getCountryCode();
-//    }
 }

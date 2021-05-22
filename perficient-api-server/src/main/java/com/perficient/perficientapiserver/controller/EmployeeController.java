@@ -7,12 +7,15 @@ import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.perficient.perficientapiserver.dao.JdbcEmployeeDAO;
 import com.perficient.perficientapiserver.model.Address;
 import com.perficient.perficientapiserver.model.Employee;
+import com.perficient.perficientapiserver.model.Field;
+import com.perficient.perficientapiserver.model.Skill;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.PostConstruct;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -52,10 +55,24 @@ public class EmployeeController {
     @ResponseStatus(HttpStatus.CREATED)
     @RequestMapping(path="/employees", method = RequestMethod.POST)
     public void createFirstName(@RequestBody JsonNode object) throws JsonProcessingException {
+        //From the JsonNode extract the employee object, address object and skill object
+        Employee employee = om.readValue(object.toString(),Employee.class);
         JsonNode addressNode = object.path("address");
-        JsonNode employeeNode = object.path("employee");
+        JsonNode skillsNode = object.path("skills");
+        //Each employee can have an array/list of skills.
+        //Each skill has a 'Field' object
+        List<Skill> skills = new ArrayList<>();
+        int skillsNodeSize = skillsNode.size();
+        for(int i=0;i < skillsNode.size();i++){
+
+            Field field = om.readValue(skillsNode.path(i).path("field").toString(),Field.class);
+            Skill skill = om.readValue(skillsNode.path(i).toString(), Skill.class);
+            skill.setField(field);
+            skills.add(skill);
+        }
         Address address = om.readValue(addressNode.toString(),Address.class);
-        Employee employee = om.readValue(employeeNode.toString(),Employee.class);
+        //Set the list of skills to the employee
+        employee.setSkills(skills);
         employeeDAO.createEmployee(employee,address);
     }
 
@@ -66,10 +83,21 @@ public class EmployeeController {
         JsonNode addressNode = object.path("address");
         Address address = om.readValue(addressNode.toString(),Address.class);
         employeeToBeUpdated.setAddress(address);
+
+        JsonNode skillsNode = object.path("skills");
+        List<Skill> skills = new ArrayList<>();
+        for(int i= 0; i< skillsNode.size();i++){
+            Field field = om.readValue(skillsNode.path(i).path("field").toString(),Field.class);
+            Skill skill = om.readValue(skillsNode.path(i).toString(),Skill.class);
+            skill.setField(field);
+            skills.add(skill);
+        }
+        employeeToBeUpdated.setSkills(skills);
         employeeDAO.updateEmployee(id,employeeToBeUpdated);
     }
 
     @ApiOperation("Delete a Perficient Employee by ID")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
     @RequestMapping(path="/employees/{id}", method = RequestMethod.DELETE)
     public void removeEmployeeById(@PathVariable UUID id){
     employeeDAO.deleteEmployee(id);

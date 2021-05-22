@@ -1,0 +1,28 @@
+curl.exe -i -X POST -H "Content-Type:application/json" -d "{
+    \"address\": {
+        \"street\": \"26 Mang St\",
+        \"suite\": \"Suite 4\",
+        \"city\": \"Plano\",
+        \"region\": \"TX\",
+        \"postal\": \"75024\",
+        \"countryCode\": \"US\"
+        },
+    \"employee\":{
+    	\"firstName\": \"Jeremy\",
+    	\"lastName\": \"Young\",           
+    	\"contactEmail\": \"jeremyy@gmail.com\",
+    	\"companyEmail\": \"jyoung@perficient.com\",
+    	\"birthDate\": \"1975-08-08\",
+	    \"hiredDate\": \"2000-02-12\",
+	    \"role\": \"Technical Consultant\",
+        \"businessUnit\": \"IBM NBU\",
+        \"assignedTo\": \"ec6ce13c-c911-431d-a279-04fe22d34184\"
+    }
+}" http://localhost:8080/employees
+
+632ac580-6b7d-4980-91d7-14bcadba51a9
+785d7762-f9d8-4183-94b8-76508491845d
+Jeremy	Young	785d7762-f9d8-4183-94b8-76508491845d	jeremyy@gmail.com	jyoung@perficient.com	1975-08-08	2000-02-12	Technical Consultant	IBM NBU	ec6ce13c-c911-431d-a279-04fe22d34184
+
+
+Need to add unique CONSTRAINT in address table using ALL field except suite

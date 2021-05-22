@@ -13,6 +13,11 @@ SELECT e.firstName,e.lastName,a.street,a.city,a.region,a.postal,a.address_countr
 FROM address a
 JOIN employee e  ON a.address_id = e.address
 WHERE e.employee_id = '632ac580-6b7d-4980-91d7-14bcadba51a9';
+---------------------------------------------------
+SELECT employee_id FROM employee WHERE firstname = 'Jeremy' AND lastname = 'Young';
+
+
+----------------------------------------------------
 
 --SELECT e.employee_id,e.firstName,e.lastName,a.street,a.city,a.region,a.postal,a.address_country_code FROM employee e JOIN address a ON e.address = a.address_id WHERE e.employee_id = ?;
 
@@ -21,8 +26,14 @@ SELECT es.employee_id,es.skill_id,s.field_id,f.name,f.type,s.experience,s.summar
 FROM employee_skill es 
 JOIN skill s ON es.skill_id = s.skill_id 
 JOIN field f ON s.field_id = f.field_id 
-WHERE es.employee_id = '632ac580-6b7d-4980-91d7-14bcadba51a9';
+WHERE es.employee_id = '9e796557-f219-416d-9ef1-74f5526ff1ce';
+-----------------------------------------------------------------------
 
+
+
+
+
+----------------------------------------------------------------------
 
 --Fetch all employees
 
@@ -45,11 +56,20 @@ INSERT INTO employee (firstName,lastName,address,contactEmail,companyEmail,birth
 
 SELECT a.address_id FROM employee e JOIN address a ON e.address = a.address_id WHERE firstName = 'Eve';
 
-SELECT * FROM employee_skill WHERE employee_id='6289f28a-4919-4b1c-b493-390edd04ae1a';
-DELETE FROM employee_skill WHERE employee_id = '77266b3b-178e-44d8-9402-a7ac0f5594d5';
+SELECT * FROM employee_skill WHERE employee_id='044d0cf7-a1ef-435c-8e76-5e795e82735c';
+DELETE FROM employee_skill WHERE employee_id = '044d0cf7-a1ef-435c-8e76-5e795e82735c';
 
-DELETE FROM employee WHERE employee_id ='9d8670b8-ca77-43ae-ad18-e69ee61187a9';
-DELETE FROM address where address_id ='46ba712e-5f10-474e-a8d6-c2674104db06';
+DELETE FROM employee WHERE employee_id ='a5a1dc42-4873-47fa-8e14-beb89ac8e02e';
+DELETE FROM address where address_id ='f87ef1c4-c034-4fc9-a995-bbbf5865e6b1';
+
+BEGIN TRANSACTION;
+SELECT address FROM employee WHERE employee_id = '044d0cf7-a1ef-435c-8e76-5e795e82735c');
+ROLLBACK TRANSACTION;
+COMMIT TRANSACTION;
+
+SELECT a.address_id FROM address a WHERE a.street = ? AND a.suite =? AND a.city= ? AND a.region = ? AND a.postal = ? AND a.address_country_code = 'IN';
+
+SELECT a.address_id FROM address a WHERE a.street = ? AND a.city= ? AND a.region = ? AND a.postal = ? AND a.address_country_code = ?;
 
 ALTER TABLE employee 
 ALTER COLUMN role TYPE roles using role::roles;
@@ -64,4 +84,11 @@ SELECT e.employee_id,e.firstName,e.lastName,a.address_id,a.street,a.suite,a.city
 FROM employee e JOIN address a ON e.address = a.address_id;
 
 --QUERY to UPDATE EMPLOYEE TABLE
-UPDATE employee SET employee_id =?,firstName = ?,lastName=?,address=?,contactemail=?,companyemail=?,birthdate=?,hireddate=?,role= CAST(? AS roles),businessunit=CAST(? AS businessunits),assignedto=? WHERE employee_id=?
+UPDATE employee SET employee_id =?,firstName = ?,lastName=?,address=?,contactemail=?,companyemail=?,birthdate=?,hireddate=?,role= CAST(? AS roles),businessunit=CAST(? AS businessunits),assignedto=? WHERE employee_id=?;
+
+--QUERY to UPDATE ADDRESS TABLE
+UPDATE address SET street =?,suite = ?,city = ?,region = ?,postal = ?,count=? WHERE employee_id=?
+
+--Alter column name
+ALTER TABLE address 
+RENAME COLUMN column_name TO new_column_name;
