@@ -26,3 +26,5 @@ Jeremy	Young	785d7762-f9d8-4183-94b8-76508491845d	jeremyy@gmail.com	jyoung@perfi
 
 
 Need to add unique CONSTRAINT in address table using ALL field except suite
+
+Field is available in UI

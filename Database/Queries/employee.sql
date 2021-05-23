@@ -87,8 +87,8 @@ FROM employee e JOIN address a ON e.address = a.address_id;
 UPDATE employee SET employee_id =?,firstName = ?,lastName=?,address=?,contactemail=?,companyemail=?,birthdate=?,hireddate=?,role= CAST(? AS roles),businessunit=CAST(? AS businessunits),assignedto=? WHERE employee_id=?;
 
 --QUERY to UPDATE ADDRESS TABLE
-UPDATE address SET street =?,suite = ?,city = ?,region = ?,postal = ?,count=? WHERE employee_id=?
+UPDATE address SET street =?,suite = ?,city = ?,region = ?,postal = ?,country = ? WHERE address_id = CAST(? AS UUID);
 
 --Alter column name
 ALTER TABLE address 
-RENAME COLUMN column_name TO new_column_name;
+RENAME COLUMN address_country_code TO country;

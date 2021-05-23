@@ -19,6 +19,7 @@ import java.util.List;
 import java.util.UUID;
 
 @RestController()
+@CrossOrigin
 public class SkillsController {
     @Autowired
     private SkillDAO dao;
