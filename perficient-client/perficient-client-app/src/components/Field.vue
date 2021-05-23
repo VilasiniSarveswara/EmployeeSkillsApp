@@ -33,7 +33,7 @@ export default {
 
   data() {
     return {
-      jobTitles: [
+      Titles: [
         { name: "Product designer", id: 1 },
         { name: "Full-stack developer", id: 2 },
         { name: "Product manager", id: 3 },
