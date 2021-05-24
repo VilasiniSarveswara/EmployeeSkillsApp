@@ -6,7 +6,7 @@ import AllEmployees from '../components/AllEmployees.vue'
 import Employee from '../components/Employee.vue'
 import UpdateEmployee from '../components/UpdateEmployee.vue'
 import CreateEmployee from '../components/CreateEmployee.vue'
-import Field from '../components/Field.vue'
+
 
 
 Vue.use(VueRouter)
@@ -26,14 +26,8 @@ const routes = [
     path: '/employees',
     name: 'create-employee',
     component: CreateEmployee
-  },
-  {
-    path: '/fields',
-    name: 'fields',
-    component: Field
-  },
+  },  
 
-  ,
   {
     path: '/employees/:id',
     name: 'viewemployee',

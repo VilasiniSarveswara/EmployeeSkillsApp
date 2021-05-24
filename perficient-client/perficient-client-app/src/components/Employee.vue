@@ -2,33 +2,29 @@
   <div class="employee">
     
       <h1>Employee Card</h1>
-      <h2>{{employee.firstName}} {{employee.lastName}}</h2>
+      <h1>{{employee.firstName}} {{employee.lastName}}</h1>
       <div class="address">
-          <h3>
-              Address: <br><br>
-          </h3>          
-          <h3>Street: {{address.street}} </h3>
-          <h3>Suite: {{address.suite}}</h3> <br>
-          <h3>City: {{address.city}}</h3>
-          <h3>Region: {{address.region}}</h3>
-          <h3>Postal: {{address.postal}}</h3>
-          <h3>Country: {{address.country}}</h3>
+          <h3> Address:</h3>          
+          <h3 class="street">Street: {{address.street}} </h3>
+          <h3 class="suite">Suite: {{address.suite}}</h3> <br>
+          <h3 class="city">City: {{address.city}}</h3>
+          <h3 class="region">Region: {{address.region}}</h3>
+          <h3 class="postal">Postal: {{address.postal}}</h3>
+          <h3 class="country">Country: {{address.country}}</h3>
       </div>
         <div >
-             <h2>
-             Skills: <br><br>
+             <h2 v-if="this.skillsLength > 0">
+             Skills: <br><br>                
           </h2>
-        <div class="skills" v-for="skill in skills" v-bind:key="skill.id">
-           
-            <h3>Skill Id: {{skill.id}}</h3>
-            <div class="fields">
-                 <h3>Field: {{skill.field.id}}</h3>
-                <h3>Name: {{skill.field.name}}</h3>
-                <h3>Type: {{skill.field.type}}</h3>
-            </div>           
-            <h3>Experience: {{skill.experience}}</h3>
-            <h3>Summary: {{skill.experience}}</h3>
-            <p>{{employee.skills.id}}</p>
+          <h2 v-else>
+              No skills to display!
+          </h2>
+        <div class="skills" v-for="skill in skills" v-bind:key="skill.id">            
+            <h3>Skill Id: {{skill.id}}</h3> 
+            <h3>Field: {{skill.field.id }}</h3>                 
+            <h3>Name: {{ skill.field.name }} Type: {{ skill.field.type }}</h3>                   
+            <h3>Experience: {{ skill.experience }} Summary: {{ skill.summary }}</h3>
+            
         </div>             
     </div>
 
@@ -44,6 +40,7 @@ export default {
    
     data(){
         return{
+            skillsLength: '',
             employee: {},
             address: {},
             skills:[{}]           
@@ -55,7 +52,8 @@ export default {
         EmployeeServices.listEmployee(employeeId).then(response =>{
             this.employee = response.data
             this.address = response.data.address
-            this.skills = response.data.skills          
+            this.skills = response.data.skills   
+            this.skillsLength = this.skills.length       
             
             
         })
@@ -74,14 +72,14 @@ export default {
 }
 
 .skills{
-    display:flex;
+    
     border: 2px solid black;
     border-radius: 10px;
     width: auto;
     height: 150px;
-    margin: 20px;
-    
-    
+    margin: 10px;   
+    padding:20px;
+
 }
 .address{
     display:flex;
@@ -91,8 +89,9 @@ export default {
     height: auto;
     margin: 20px;
 }
-.fields{
-    display: flex;
+
+.street,.suite,.city,.region,.postal,.country{
+    padding: 70px
 }
 
 </style>

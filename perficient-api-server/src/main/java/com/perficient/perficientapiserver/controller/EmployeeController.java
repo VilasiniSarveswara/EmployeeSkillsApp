@@ -74,6 +74,8 @@ public class EmployeeController {
         Address address = om.readValue(addressNode.toString(),Address.class);
         //Set the list of skills to the employee
         employee.setSkills(skills);
+
+        System.out.println("Printing Employee Details: " +employee.toString());
         employeeDAO.createEmployee(employee,address);
     }
 

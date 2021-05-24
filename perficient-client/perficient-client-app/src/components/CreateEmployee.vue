@@ -1,9 +1,12 @@
 <template>
   <div>
     <h1>Add a New Employee</h1>
-    <form>
-      Firstname*: <input type="text" v-model="employee.firstName" /><br /><br />
-      Lastname*: <input type="text" v-model="employee.lastName" /> <br /><br />
+    <form v-on:submit.prevent="createEmployee">
+      <label for="firstname">Firstname*:</label>
+       <input type="text" id="firstname" v-model="employee.firstName" /><br /><br />
+
+       <label for="lastname">Lastname*:</label>
+       <input type="text" id="lastname" v-model="employee.lastName" /> <br /><br />
       <div id="address">
         Address: <br />
         Street*: <input type="text" v-model="employee.address.street" />
@@ -16,7 +19,7 @@
         Postal: <input type="text" v-model="employee.address.postal" />
         <br /><br />
         Country:[2 character]
-        <input type="text" v-model="employee.address.region" /> <br /><br />
+        <input type="text" v-model="employee.address.country" /> <br /><br />
       </div>
       Contact Email: <input type="text" v-model="employee.contactEmail" />
       <br /><br />
@@ -37,13 +40,13 @@
       Assigned To: <input type="text" v-model="employee.assignedTo" />
       <br /><br />
 
-      <div>
-        <h2>Skills</h2>
+      <div class="skills">
+        <h2>Skills Section</h2>
 
         <h2>Fields</h2>
         <div id="fields">
-          <select class="form-control" @change="changeJobTitle($event)">
-            <option value="" selected disabled>Choose</option>
+          <select class="form-control" @change="changeTitle($event)">
+            <option value="" selected disabled>Choose a Field</option>
             <option
               v-for="field in FieldTitles"
               :value="field.id"
@@ -54,18 +57,18 @@
           </select>
           <br /><br />
           <p>
-            <span>Selected Field: {{ selectedField }}</span> <br /><br />
-            <button @click.prevent="addSkill($event)">Add Skill</button>
-          </p>
-          <p v-for="field in addedSkills" v-bind:key="field.id">{{ field }}</p>
+            <span>Selected Field: {{ selectedField }}</span> <br /><br />            
+          </p>         
+          <p v-for="field in addedSkills" v-bind:key="field.id">{{ FieldTitles[field].name }}</p>
         </div>
 
         Experience(in months):
-        <input type="text" v-model="employee.skills.experience" /> Summary:
-        <input type="text" v-model="employee.skills.summary" />
+        <input type="text" v-model="experience" /> Summary:
+        <input type="text" v-model="summary" />
+        <button @click.prevent="addSkill($event)">Add Skill</button>
       </div>
 
-      <input type="submit" v-on:submit.prevent="createEmployee" />
+      <button class="button">Create Employee</button>
     </form>
   </div>
 </template>
@@ -78,23 +81,37 @@ export default {
 
   data() {
     return {
+      experience: "",
+      summary: "",
+      skill:{
+        field: '',
+        experience: '',
+        summary:''
+      },
+      skills:[],
+
+      currentField:{},
       employee: {
         address: {},
-        skills: [],
+        skills: [],        
       },
       FieldTitles: [
-        { name: "Product designer", id: 1 },
-        { name: "Full-stack developer", id: 2 },
-        { name: "Product manager", id: 3 },
-        { name: "Senior front-end developer", id: 4 },
+        { name: "Vue", id: 'b87ffe6b-f774-4955-8c2b-b7c7351e7eb2', type: 'Front End Development' },
+        {  name: "Java", id: '4298540b-2bb6-4efb-be0a-d4d2f0961a69', type: 'Software Development'},
+        {  name: "JavaScript", id: '80d4c4d9-e0c4-4cba-8c5f-608deeb8d47d', type: 'Software Development'},
+        {  name: "Selenium", id: '999aed0c-e9cf-45cc-8ee7-9a043b54673c', type: 'Software Testing' },
       ],
       selectedField: "",
       addedSkills: [],
       selectedIndex: "",
     };
   },
-  methods: {
+  methods: {  
     addSkill(event) {
+      if(this.selectedIndex === "" || this.selectedIndex > this.FieldTitles.length){
+        alert("Please choose a field to add!")
+      }
+      
       if (this.addedSkills.length > 0) {
         if (this.addedSkills.length != this.FieldTitles.length) {
           this.result = false;
@@ -112,20 +129,36 @@ export default {
         }
       }
       if (this.result !== "true") {
-        this.result = false;
+        this.result = false;    
         this.addedSkills.push(this.selectedIndex - 1);
+        this.currentField = this.FieldTitles[this.selectedIndex - 1]
+        this.skill.field = this.currentField
+        this.skill.experience = this.experience
+        this.skill.summary = this.summary
+        this.skills.push(this.skill)
+        this.employee.skills.push(this.skills[0])
+
+        
+
+        //this.addedSkills.push(this.FieldTitles[this.selectedIndex - 1].toString());
+        //this.addedSkills.push(skillobj);
+        console.log("Field is " + this.FieldTitles[this.selectedIndex - 1].toString());
         console.log(this.addedSkills);
+
       }
       
     },
-    changeJobTitle(event) {
+    changeTitle(event) {
       this.selectedIndex = event.target.options.selectedIndex;
       this.selectedField =
         event.target.options[event.target.options.selectedIndex].text;
+        
     },
     createEmployee() {
-      EmployeeServices.createEmployee(employee).then((response) => {
-       // this.$router.push({ name: "all-employees" });
+      EmployeeServices.createEmployee(this.employee).then((response) => {
+
+
+        this.$router.push({ name: "all-employees" });
       });
     },
   },
@@ -133,4 +166,10 @@ export default {
 </script>
 
 <style>
+.button{
+  margin:20px;
+}
+.skills{
+  height:300px;
+}
 </style>
