@@ -94,6 +94,17 @@ public class JdbcSkillDAOTest {
         dao = new JdbcSkillDAO(dataSource);
         employeeDAO = new JdbcEmployeeDAO(dataSource);
 
+        employeeDAO.createEmployee(employee,address);
+        //Get the newly created employee id.
+        String sqlGetEmployeeID = "SELECT employee_id FROM employee WHERE firstname = ? AND lastname = ?;";
+        results = jdbcTemplate.queryForRowSet(sqlGetEmployeeID,employee.getFirstName(),employee.getLastName());
+        employeeId = null;
+        while(results.next()){
+            employeeId = (UUID)results.getObject("employee_id");
+        }
+        employee.setId(employeeId);
+
+
         //Second field and skill instance
         //Create Test Field
         UUID testFieldId = null;
@@ -121,12 +132,11 @@ public class JdbcSkillDAOTest {
         //Arrange -
         int expectedSkillSize = dao.findAllSkillsByEmployee(employeeId).size();
         //Act
-        dao.addSkillToEmployee(employeeId,skill);
         dao.addSkillToEmployee(employeeId,testSkill);
 
         int actualSkillSize = dao.findAllSkillsByEmployee(employeeId).size();
         //Assert
-        Assert.assertEquals(expectedSkillSize + 2, actualSkillSize);
+        Assert.assertEquals(expectedSkillSize + 1, actualSkillSize);
     }
 
     @Test
@@ -144,26 +154,25 @@ public class JdbcSkillDAOTest {
 
     @Test
     public void findSkillOfEmployeeById() {
+
+        dao.addSkillToEmployee(employeeId,testSkill);
+
         //Arrange - Employee has already been created
+        Employee expectedEmployee = employeeDAO.getEmployeeByID(employeeId);
 
-        employeeDAO.createEmployee(employee,address);
-        //Get the newly created employee id.
-        String sqlGetEmployeeID = "SELECT employee_id FROM employee WHERE firstname = ? AND lastname = ?;";
-        results = jdbcTemplate.queryForRowSet(sqlGetEmployeeID,employee.getFirstName(),employee.getLastName());
-        employeeId = null;
+        String sqlGetSkillId = "SELECT skill_id FROM skill WHERE field_id = ? AND experience = ? AND summary = ?;";
+        SqlRowSet results = jdbcTemplate.queryForRowSet(sqlGetSkillId,skill.getField().getId(),skill.getExperience(),skill.getSummary());
+        UUID skillId = null;
         while(results.next()){
-            employeeId = (UUID)results.getObject("employee_id");
+            testSkill.setId((UUID)results.getObject("skill_id"));
         }
-        employee.setId(employeeId);
-
         //Act
-        Skill actualSkill = new Skill();
-        actualSkill = dao.findSkillOfEmployeeById(employeeId,skillId);
+        Skill actualSkill = dao.findSkillOfEmployeeById(expectedEmployee.getId(),expectedEmployee.getSkills().get(1).getId());
         //Assert
-        Assert.assertTrue(employee.getSkills().get(0).getId().equals(actualSkill.getId()));
-        Assert.assertEquals(employee.getSkills().get(0).getExperience(),actualSkill.getExperience());
-        Assert.assertTrue(employee.getSkills().get(0).getField().getId().equals(actualSkill.getField().getId()));
-        Assert.assertTrue(employee.getSkills().get(0).getSummary().equals(actualSkill.getSummary()));
+        Assert.assertTrue(expectedEmployee.getSkills().get(1).getId().equals(actualSkill.getId()));
+        Assert.assertEquals(expectedEmployee.getSkills().get(1).getExperience(),actualSkill.getExperience());
+        Assert.assertTrue(expectedEmployee.getSkills().get(1).getField().getId().equals(actualSkill.getField().getId()));
+        Assert.assertTrue(expectedEmployee.getSkills().get(1).getSummary().equals(actualSkill.getSummary()));
     }
 
     @Test
