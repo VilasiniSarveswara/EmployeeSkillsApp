@@ -22,8 +22,10 @@
         <div class="skills" v-for="skill in skills" v-bind:key="skill.id">            
             <h3>Skill Id: {{skill.id}}</h3> 
             <h3>Field: {{skill.field.id }}</h3>                 
-            <h3>Name: {{ skill.field.name }} Type: {{ skill.field.type }}</h3>                   
-            <h3>Experience: {{ skill.experience }} Summary: {{ skill.summary }}</h3>
+            <h3>Name: {{ skill.field.name }} </h3>
+            <h3>Type: {{ skill.field.type }}</h3>                   
+            <h3>Experience: {{ skill.experience }} </h3>
+            <h3> {{ skill.summary }}</h3>
             
         </div>             
     </div>

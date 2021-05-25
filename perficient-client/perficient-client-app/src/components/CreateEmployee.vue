@@ -88,7 +88,7 @@ export default {
         experience: '',
         summary:''
       },
-      skills:[],
+      //skills:[],
 
       currentField:{},
       employee: {
@@ -135,13 +135,11 @@ export default {
         this.skill.field = this.currentField
         this.skill.experience = this.experience
         this.skill.summary = this.summary
-        this.skills.push(this.skill)
-        this.employee.skills.push(this.skills[0])
+        //this.skills.push(this.skill)
+        this.employee.skills.push(this.skill)
+        this.skill = {}
+       
 
-        
-
-        //this.addedSkills.push(this.FieldTitles[this.selectedIndex - 1].toString());
-        //this.addedSkills.push(skillobj);
         console.log("Field is " + this.FieldTitles[this.selectedIndex - 1].toString());
         console.log(this.addedSkills);
 
