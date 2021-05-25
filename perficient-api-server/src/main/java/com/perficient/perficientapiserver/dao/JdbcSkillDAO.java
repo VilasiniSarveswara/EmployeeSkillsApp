@@ -75,7 +75,8 @@ public class JdbcSkillDAO implements SkillDAO {
         String sqlRemoveSkillById = "DELETE FROM employee_skill WHERE employee_id = ? AND skill_id = ?;";
         jdbcTemplate.update(sqlRemoveSkillById,employeeId,skillID);
 
-
+        String sqlRemoveFromSkill = "DELETE FROM skill WHERE skill_id = ?;";
+        jdbcTemplate.update(sqlRemoveSkillById,skillID);
     }
     //Helper methods
     Skill mapRowToSkill(SqlRowSet results){

@@ -7,7 +7,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.rowset.SqlRowSet;
 import org.springframework.stereotype.Component;
 
-import java.nio.charset.StandardCharsets;
+import javax.sql.DataSource;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -16,10 +16,15 @@ import java.util.UUID;
 public class JdbcEmployeeDAO implements  EmployeeDAO{
     private JdbcTemplate jdbcTemplate;
 
-
-    public JdbcEmployeeDAO(JdbcTemplate jdbcTemplate) {
+    /*public JdbcEmployeeDAO(JdbcTemplate jdbcTemplate) {
         this.jdbcTemplate = jdbcTemplate;
+    }*/
+
+    public JdbcEmployeeDAO(DataSource datasource){
+        this.jdbcTemplate = new JdbcTemplate(datasource);
     }
+
+
 
     @Override
     public List<Employee> getEmployeeList() {
@@ -149,7 +154,7 @@ public class JdbcEmployeeDAO implements  EmployeeDAO{
 
     }
 
-    public UUID mapRowToAddress(SqlRowSet results){
+    private UUID mapRowToAddress(SqlRowSet results){
         UUID address_id = (UUID)results.getObject("address_id");
         return address_id;
     }

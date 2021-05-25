@@ -37,6 +37,20 @@ public class Employee {
         this.assignedTo = assignedTo;
     }
 
+    public Employee(String firstName, String lastName, Address address, String contactEmail, String companyEmail, LocalDate birthDate, LocalDate hiredDate, String role, String businessUnit, List<Skill> skills, UUID assignedTo) {
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.address = address;
+        this.contactEmail = contactEmail;
+        this.companyEmail = companyEmail;
+        this.birthDate = birthDate;
+        this.hiredDate = hiredDate;
+        this.role = role;
+        this.businessUnit = businessUnit;
+        this.skills = skills;
+        this.assignedTo = assignedTo;
+    }
+
     public UUID getId() {
         return id;
     }

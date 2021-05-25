@@ -25,6 +25,15 @@ public class Address {
         this.country = country;
     }
 
+    public Address(String street, String suite, String city, String region, String postal, String country) {
+        this.street = street;
+        this.suite = suite;
+        this.city = city;
+        this.region = region;
+        this.postal = postal;
+        this.country = country;
+    }
+
     public UUID getId() {
         return id;
     }

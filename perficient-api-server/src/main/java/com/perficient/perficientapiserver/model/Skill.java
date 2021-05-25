@@ -18,6 +18,12 @@ public class Skill {
         this.summary = summary;
     }
 
+    public Skill(Field field, int experience, String summary) {
+        this.field = field;
+        this.experience = experience;
+        this.summary = summary;
+    }
+
     public UUID getId() {
         return id;
     }
