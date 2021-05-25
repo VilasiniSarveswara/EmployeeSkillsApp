@@ -79,14 +79,28 @@ export default {
              const employeeId = this.$route.params.id
              EmployeeServices.updateEmployee(employeeId,this.employee).then(response =>{
                  this.$router.push('/employees')
-             })
+             }).catch(error =>{
+            if(error.response){
+                this.errorMsg = "Error updating employee! Please try again."
+            }
+            if(error.request){
+                 this.errorMsg = "Server couold not be reached! Please try again."                
+            }
+        })
          },
          
         deleteEmployee(){
             const employeeId = this.$route.params.id
             EmployeeServices.deleteEmployee(employeeId,this.employee).then(response =>{
                 this.$router.push('/employees')
-            })
+            }).catch(error =>{
+            if(error.response){
+                this.errorMsg = "Error deleting employee! Please try again."
+            }
+            if(error.request){
+                 this.errorMsg = "Server couold not be reached! Please try again."                
+            }
+        })
         }
     }
 

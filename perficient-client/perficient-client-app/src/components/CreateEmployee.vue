@@ -154,10 +154,15 @@ export default {
     },
     createEmployee() {
       EmployeeServices.createEmployee(this.employee).then((response) => {
-
-
         this.$router.push({ name: "all-employees" });
-      });
+      }) .catch((error) =>{
+        if(error.response){
+          this.errorMsg = "Error creating an employee.Please try again."
+        }
+        if(error.request){
+                 this.errorMsg = "Server couold not be reached! Please try again."                
+            }
+      })
     },
   },
 };

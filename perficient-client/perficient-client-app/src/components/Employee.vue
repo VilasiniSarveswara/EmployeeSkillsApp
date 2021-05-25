@@ -55,9 +55,14 @@ export default {
             this.employee = response.data
             this.address = response.data.address
             this.skills = response.data.skills   
-            this.skillsLength = this.skills.length       
-            
-            
+            this.skillsLength = this.skills.length            
+        }) .catch(error =>{
+            if(error.response){
+                this.errorMsg = "Error displaying employee! Please try again."
+            }
+            if(error.request){
+                 this.errorMsg = "Server couold not be reached! Please try again."                
+            }
         })
     }   
 

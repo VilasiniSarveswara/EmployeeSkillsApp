@@ -46,7 +46,15 @@ export default {
   created() {
     EmployeeServices.listAllEmployees().then((response) => {
       this.employeeList = response.data;
-    });
+    }) .catch(error =>{
+      if(error.response){
+        this.errorMsg = "Error fetching all employees. Please try again. "
+      }
+      if(error.request){
+                 this.errorMsg = "Server couold not be reached! Please try again."                
+            }
+
+    })
   },
 };
 </script>

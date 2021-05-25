@@ -65,7 +65,7 @@ public class JdbcSkillDAO implements SkillDAO {
         while(results.next()){
            skill = mapRowToSkill(results);
         }
-        return skill;
+        return skill;   
     }
 
     @Override
