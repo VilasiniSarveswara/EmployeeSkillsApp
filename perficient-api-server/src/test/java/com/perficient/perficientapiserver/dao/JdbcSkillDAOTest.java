@@ -191,12 +191,13 @@ public class JdbcSkillDAOTest {
     @Test
     public void removeSkillOfEmployeeById() {
         dao.addSkillToEmployee(employeeId,skill);
-        int expectedSkillSize = dao.findAllSkillsByEmployee(employeeId).size();
+        Employee expectedEmployee = employeeDAO.getEmployeeByID(employeeId);
+        int expectedSkillSize = dao.findAllSkillsByEmployee(expectedEmployee.getId()).size();
         //Act
-        dao.removeSkillOfEmployeeById(employeeId,skillId);
-        int actualSkillSize = dao.findAllSkillsByEmployee(employeeId).size();
+        dao.removeSkillOfEmployeeById(expectedEmployee.getId(),skillId);
+        int actualSkillSize = dao.findAllSkillsByEmployee(expectedEmployee.getId()).size();
         //Assert
-        Assert.assertEquals(expectedSkillSize -1 , actualSkillSize);
+        Assert.assertEquals(expectedSkillSize , actualSkillSize);
     }
 
    //Helper method

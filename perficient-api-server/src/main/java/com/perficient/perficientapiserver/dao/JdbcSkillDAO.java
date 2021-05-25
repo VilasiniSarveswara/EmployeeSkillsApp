@@ -78,10 +78,11 @@ public class JdbcSkillDAO implements SkillDAO {
     @Override
     public void removeSkillOfEmployeeById(UUID employeeId, UUID skillID) {
         String sqlRemoveSkillById = "DELETE FROM employee_skill WHERE employee_id = ? AND skill_id = ?;";
-        jdbcTemplate.update(sqlRemoveSkillById,employeeId,skillID);
+
 
         String sqlRemoveFromSkill = "DELETE FROM skill WHERE skill_id = ?;";
         jdbcTemplate.update(sqlRemoveFromSkill,skillID);
+        jdbcTemplate.update(sqlRemoveSkillById,employeeId,skillID);
     }
     //Helper methods
     Skill mapRowToSkill(SqlRowSet results){
