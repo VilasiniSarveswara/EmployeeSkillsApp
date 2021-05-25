@@ -44,7 +44,7 @@ public class SkillsController {
     @ApiOperation("Find a technical skill, from a Perficient employee, by ID.")
     @RequestMapping(path="/employees/{employeeId}/skills/{skillId}",method = RequestMethod.GET)
     public Skill findAllSkillsByEmployee(@PathVariable UUID employeeId, @PathVariable UUID skillId){
-        Skill skill = dao.findSkillFromEmployeeById(employeeId,skillId);
+        Skill skill = dao.findSkillOfEmployeeById(employeeId,skillId);
         return skill;
     }
 
@@ -52,7 +52,7 @@ public class SkillsController {
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @RequestMapping(path="/employees/{employeeId}/skills/{skillId}",method = RequestMethod.DELETE)
     public void removeSkillFromEmployeeById(@PathVariable UUID employeeId, @PathVariable UUID skillId){
-        dao.removeSkillFromEmployeeById(employeeId,skillId);
+        dao.removeSkillOfEmployeeById(employeeId,skillId);
     }
 
     @ApiOperation("Add a technical skill to a Perficient employee.")
@@ -69,13 +69,12 @@ public class SkillsController {
 
     @ApiOperation("Update a technical skill, from a Perficient employee, by ID.")
     @RequestMapping(path="/employees/{employeeId}/skills/{skillId}",method = RequestMethod.PUT)
-    public void updateSkillFromEmployeeById(@RequestBody JsonNode object, @PathVariable UUID employeeId,@PathVariable UUID skillId) throws JsonProcessingException {
-
+    public void updateSkillOfEmployeeById(@RequestBody JsonNode object, @PathVariable UUID employeeId,@PathVariable UUID skillId) throws JsonProcessingException {
         JsonNode fieldNode = object.path("field");
         Field field = objectmapper.readValue(fieldNode.toString(), Field.class);
         Skill skill = objectmapper.readValue(object.toString(),Skill.class);
         skill.setField(field);
-        dao.updateSkillFromEmployeeById(employeeId,skillId,skill);
+        dao.updateSkillOfEmployeeById(employeeId,skillId,skill);
     }
 
 }

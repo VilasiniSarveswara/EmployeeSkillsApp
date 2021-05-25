@@ -8,7 +8,7 @@ import java.util.UUID;
 public interface SkillDAO {
     List<Skill> findAllSkillsByEmployee(UUID employeeId);
     void addSkillToEmployee(UUID employeeId,Skill skill);
-    Skill findSkillFromEmployeeById(UUID employeeId, UUID skillId);
-    void updateSkillFromEmployeeById(UUID employeeId, UUID skillId, Skill skill);
-    void removeSkillFromEmployeeById(UUID employeeId, UUID skillID);
+    Skill findSkillOfEmployeeById(UUID employeeId, UUID skillId);
+    void updateSkillOfEmployeeById(UUID employeeId, UUID skillId, Skill skill);
+    void removeSkillOfEmployeeById(UUID employeeId, UUID skillID);
 }

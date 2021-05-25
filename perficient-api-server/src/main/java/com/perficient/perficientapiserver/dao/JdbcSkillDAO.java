@@ -6,6 +6,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.rowset.SqlRowSet;
 import org.springframework.stereotype.Component;
 
+import javax.sql.DataSource;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -14,8 +15,12 @@ import java.util.UUID;
 public class JdbcSkillDAO implements SkillDAO {
     private JdbcTemplate jdbcTemplate;
 
-    public JdbcSkillDAO(JdbcTemplate jdbcTemplate) {
+    /*public JdbcSkillDAO(JdbcTemplate jdbcTemplate) {
         this.jdbcTemplate = jdbcTemplate;
+    }*/
+
+    public JdbcSkillDAO(DataSource datasource){
+        this.jdbcTemplate = new JdbcTemplate(datasource);
     }
 
 
@@ -51,7 +56,7 @@ public class JdbcSkillDAO implements SkillDAO {
     }
 
     @Override
-    public Skill findSkillFromEmployeeById(UUID employeeId, UUID skillId) {
+    public Skill findSkillOfEmployeeById(UUID employeeId, UUID skillId) {
         Skill skill = new Skill();
         String sqlFindSkillByEmployeeID =  "SELECT es.skill_id,s.field_id," +
                 "f.name,f.type,s.experience,s.summary FROM employee_skill es JOIN skill s ON es.skill_id = s.skill_id " +
@@ -64,19 +69,19 @@ public class JdbcSkillDAO implements SkillDAO {
     }
 
     @Override
-    public void updateSkillFromEmployeeById(UUID employeeId, UUID skillId, Skill skill) {
+    public void updateSkillOfEmployeeById(UUID employeeId, UUID skillId, Skill skill) {
         String sqlUpdateSkillByID = "UPDATE skill SET field_id = ?,experience = ? ,summary = ? WHERE skill_id = ?;";
         jdbcTemplate.update(sqlUpdateSkillByID,skill.getField().getId(),skill.getExperience(),skill.getSummary(),skillId);
 
     }
 
     @Override
-    public void removeSkillFromEmployeeById(UUID employeeId, UUID skillID) {
+    public void removeSkillOfEmployeeById(UUID employeeId, UUID skillID) {
         String sqlRemoveSkillById = "DELETE FROM employee_skill WHERE employee_id = ? AND skill_id = ?;";
         jdbcTemplate.update(sqlRemoveSkillById,employeeId,skillID);
 
         String sqlRemoveFromSkill = "DELETE FROM skill WHERE skill_id = ?;";
-        jdbcTemplate.update(sqlRemoveSkillById,skillID);
+        jdbcTemplate.update(sqlRemoveFromSkill,skillID);
     }
     //Helper methods
     Skill mapRowToSkill(SqlRowSet results){

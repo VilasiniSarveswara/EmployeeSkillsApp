@@ -33,7 +33,8 @@ public class JdbcEmployeeDAO implements  EmployeeDAO{
         SqlRowSet results = jdbcTemplate.queryForRowSet(sqlGetAllEmployees);
          while(results.next()){
              Employee theEmployee = mapRowToEmployee(results);
-             JdbcSkillDAO skillDAO = new JdbcSkillDAO(jdbcTemplate);
+             //JdbcSkillDAO skillDAO = new JdbcSkillDAO(jdbcTemplate);
+             JdbcSkillDAO skillDAO = new JdbcSkillDAO(jdbcTemplate.getDataSource());
              theEmployee.setSkills(skillDAO.findAllSkillsByEmployee(theEmployee.getId()));
              employeeList.add(theEmployee);
          }
@@ -72,7 +73,8 @@ public class JdbcEmployeeDAO implements  EmployeeDAO{
         }
         employee.setId(employeeId);
     //Fifth,add skills to the employee and update the related table employee_skill
-    JdbcSkillDAO skillDAO = new JdbcSkillDAO(jdbcTemplate);
+   // JdbcSkillDAO skillDAO = new JdbcSkillDAO(jdbcTemplate);
+        JdbcSkillDAO skillDAO = new JdbcSkillDAO(jdbcTemplate.getDataSource());
     for(Skill skill : employee.getSkills()){
         skillDAO.addSkillToEmployee(employee.getId(),skill);
     }
@@ -86,7 +88,8 @@ public class JdbcEmployeeDAO implements  EmployeeDAO{
         while(results.next()){
             theEmployee = mapRowToEmployee(results);
         }
-        JdbcSkillDAO skillDAO = new JdbcSkillDAO(jdbcTemplate);
+        //JdbcSkillDAO skillDAO = new JdbcSkillDAO(jdbcTemplate);
+        JdbcSkillDAO skillDAO = new JdbcSkillDAO(jdbcTemplate.getDataSource());
         theEmployee.setSkills(skillDAO.findAllSkillsByEmployee(employeeID));
         return theEmployee;
     }
@@ -100,9 +103,9 @@ public class JdbcEmployeeDAO implements  EmployeeDAO{
         String sqlUpdateEmployee = "UPDATE employee SET firstName = ?,lastName=?,address=?,contactemail=?,companyemail=?,birthdate=?,hireddate=?,role= CAST(? AS roles),businessunit=CAST(? AS businessunits),assignedto=? WHERE employee_id=?;";
         jdbcTemplate.update(sqlUpdateEmployee,employee.getFirstName(),employee.getLastName(),employee.getAddress().getId(),employee.getContactEmail(),employee.getCompanyEmail(),employee.getBirthDate(),employee.getHiredDate(),employee.getRole(),employee.getBusinessUnit(),employee.getAssignedTo(),employeeID);
 
-        JdbcSkillDAO skillDAO = new JdbcSkillDAO(jdbcTemplate);
+        JdbcSkillDAO skillDAO = new JdbcSkillDAO(jdbcTemplate.getDataSource());
         for(int i = 0; i < employee.getSkills().size();i++){
-            skillDAO.updateSkillFromEmployeeById(employeeID,employee.getSkills().get(i).getId(),employee.getSkills().get(i));
+            skillDAO.updateSkillOfEmployeeById(employeeID,employee.getSkills().get(i).getId(),employee.getSkills().get(i));
         }
 
     }
